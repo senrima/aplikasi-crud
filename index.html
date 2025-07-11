@@ -64,7 +64,7 @@
             <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
                 <h1 class="text-3xl font-bold text-gray-800">Selamat Datang</h1>
                 <p class="text-gray-600 mt-2 mb-8">Harap login dengan akun Google Anda untuk melanjutkan.</p>
-                <div class="flex justify-center">
+                <div id="login-button-container" class="flex justify-center">
                     <div id="g_id_onload" data-client_id="758799128401-9cusm8skl6gv8qqldtefm7ibds1evopq.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
                     <div class="g_id_signin" data-type="standard" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
                 </div>
@@ -140,7 +140,6 @@
                 return;
             }
             const client_id = client_id_element.dataset.clientId;
-            // PERBAIKAN: Logika if yang salah sudah dihapus. Sekarang hanya memeriksa placeholder.
             if (!client_id || client_id === "MASUKKAN_CLIENT_ID_ANDA_DI_SINI") {
                 console.error("Client ID belum diisi. Harap masukkan Client ID Anda di dalam HTML.");
                 alert("Konfigurasi Error: Client ID belum diisi.");
@@ -152,9 +151,8 @@
                 callback: (tokenResponse) => {
                     if (tokenResponse && tokenResponse.access_token) {
                         googleAccessToken = tokenResponse.access_token;
-                        loginContainer.classList.add('hidden');
-                        appContainer.classList.remove('hidden');
-                        fetchData();
+                        // PERBAIKAN: Panggil fungsi untuk menampilkan aplikasi
+                        showApp();
                     }
                 },
             });
@@ -162,8 +160,15 @@
         
         function handleCredentialResponse(response) {
             if (response.credential) {
+                // PERBAIKAN: Panggil fungsi untuk meminta token akses
                 tokenClient.requestAccessToken();
             }
+        }
+
+        function showApp() {
+            loginContainer.classList.add('hidden');
+            appContainer.classList.remove('hidden');
+            fetchData();
         }
 
         // --- LOGIKA APLIKASI CRUD ---
@@ -174,7 +179,11 @@
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${googleAccessToken}`},
                 body: JSON.stringify(payload)
             });
-            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            if (!res.ok) {
+                // Jika error, coba dapatkan teks errornya
+                const errorText = await res.text();
+                throw new Error(`HTTP error! status: ${res.status} - ${errorText}`);
+            }
             return res.json();
         }
 
@@ -371,3 +380,10 @@
     </script>
 </body>
 </html>
+```
+
+---
+**Ringkasan Versi Uji Coba:**
+* **Kode Web:** `html_crud_final_v9_final_fix`
+* **Kode Script:** `gscript_final_gis_v2`
+* **Metode:** `Web App` (dengan Otorisasi Token)
