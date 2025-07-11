@@ -141,8 +141,8 @@
             }
             const client_id = client_id_element.dataset.clientId;
             if (!client_id || client_id === "MASUKKAN_CLIENT_ID_ANDA_DI_SINI") {
-                console.error("Client ID belum diisi. Harap masukkan Client ID Anda di dalam HTML.");
-                alert("Konfigurasi Error: Client ID belum diisi.");
+                console.error("Client ID belum diisi. Harap periksa file index.html di GitHub.");
+                alert("Konfigurasi Error: Client ID belum diisi. Periksa file di GitHub dan lakukan Hard Refresh (Ctrl+Shift+R).");
                 return;
             }
             tokenClient = google.accounts.oauth2.initTokenClient({
@@ -177,7 +177,10 @@
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${googleAccessToken}`},
                 body: JSON.stringify(payload)
             });
-            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            if (!res.ok) {
+                const errorText = await res.text();
+                throw new Error(`HTTP error! status: ${res.status} - ${errorText}`);
+            }
             return res.json();
         }
 
@@ -374,3 +377,10 @@
     </script>
 </body>
 </html>
+```
+
+---
+**Ringkasan Versi Uji Coba:**
+* **Kode Web:** `html_crud_final_v10_clean`
+* **Kode Script:** `gscript_final_gis_v3`
+* **Metode:** `Web App` (dengan Otorisasi Token GIS Modern)
