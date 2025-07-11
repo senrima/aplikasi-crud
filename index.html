@@ -134,7 +134,13 @@
 
         // --- LOGIKA GOOGLE SIGN-IN (GIS BARU) ---
         window.onload = function () {
-            const client_id = document.getElementById('g_id_onload').dataset.clientId;
+            const client_id_element = document.getElementById('g_id_onload');
+            if (!client_id_element) {
+                alert("Error Kritis: Elemen g_id_onload tidak ditemukan.");
+                return;
+            }
+            const client_id = client_id_element.dataset.clientId;
+            // PERBAIKAN: Logika if yang salah sudah dihapus. Sekarang hanya memeriksa placeholder.
             if (!client_id || client_id === "MASUKKAN_CLIENT_ID_ANDA_DI_SINI") {
                 console.error("Client ID belum diisi. Harap masukkan Client ID Anda di dalam HTML.");
                 alert("Konfigurasi Error: Client ID belum diisi.");
